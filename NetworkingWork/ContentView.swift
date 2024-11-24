@@ -42,6 +42,37 @@ struct ContentView: View {
         }
         .padding()
     }
+    func FetchData() async {
+        //create the URL
+        let url = URL(string: "https://jsonplaceholder.typicode.com/posts")
+        guard let unwrappedUrl  = url else {
+            print("Invalid Response")
+            return
+        }
+        
+        do{ //Initialize URL session
+            let (data, response) = try await URLSession.shared.data(from: unwrappedUrl)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Invalid Response")
+                return
+            }
+            
+            switch httpResponse.statusCode{
+            case 200..<300:
+                let decodedData = try JSONDecoder().decode([PostDTO].self, from: data)
+                postData = decodedData
+                
+            
+                
+            default:
+                print ("Ivalid Respose")
+            }
+            
+            
+        }catch{
+            
+        }
+    }
 }
 
 #Preview {
