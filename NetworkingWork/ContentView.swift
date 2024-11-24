@@ -32,7 +32,10 @@ struct ContentView: View {
                 List(postData, id: \.self ){ post in
                     VStack(alignment: .leading){
                         Text(post.title)
+                            .bold()
                         Text(post.body)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                         
                     }
                     
@@ -41,6 +44,11 @@ struct ContentView: View {
             
         }
         .padding()
+        .onAppear(){
+            Task{
+                await FetchData()
+            }
+        }
     }
     func FetchData() async {
         //create the URL
@@ -61,15 +69,15 @@ struct ContentView: View {
             case 200..<300:
                 let decodedData = try JSONDecoder().decode([PostDTO].self, from: data)
                 postData = decodedData
-                
-            
-                
+            case 400..<500:
+                print("Server Issue")
             default:
                 print ("Ivalid Respose")
             }
             
             
         }catch{
+            print("something went  wrong \(error.localizedDescription)")
             
         }
     }
